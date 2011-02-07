@@ -1,4 +1,5 @@
 from datetime import datetime
+import hashlib
 
 from BeautifulSoup import BeautifulSoup
 
@@ -7,9 +8,7 @@ from models import *
 from sites.base import Site
 
 class Failbook(Site):
-  def __init__(self, min_date=None):
-    super(self.__class__, self).__init__()
-    self.site_id = 1
+  site_id = 1
 
   def get_link(self, page_id):
     return "http://failbook.failblog.org/page/" + str(page_id)
@@ -32,6 +31,14 @@ class Failbook(Site):
     items = []
     for fail in fails:
       content = unicode(str(fail), encoding)
-      items.append(Story(self.site_id, content, date, date))
+      items.append(Story(self.site_id, content, self.item_hash_function,
+                         date, date))
 
     return items
+
+  @staticmethod
+  def item_hash_function(item):
+    src = item.content.split("src=")[-1].split("\"")[1]
+    hash = hashlib.md5()
+    hash.update(src)
+    return hash.hexdigest()

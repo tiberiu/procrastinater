@@ -11,7 +11,7 @@ class Site(object):
   def parse_page(self, page, encoding="UTF-8"):
     raise NotImplementedError()
 
-  def handle_page(self, page, encoding="UTF-8"):
+  def handle_page(self, page_id, page, encoding="UTF-8"):
     entries = self.parse_page(page, encoding)
 
     cnt = 0

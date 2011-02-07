@@ -12,7 +12,10 @@ from sites import *
 
 class Crawler(object):
   def __init__(self):
-    self.sites = [('failbook', Failbook())]
+    self.sites = [
+        ('failbook', Failbook()),
+        #TODO: ('tv.com', TVcom())
+    ]
 
   def download_page(self, url):
     request = HttpRequest(url)
@@ -24,7 +27,7 @@ class Crawler(object):
 
   def crawl_site(self, site):
     site_class = site[1]
-    page_id = 90
+    page_id = 1
     next_page = True
     while next_page:
       url = site_class.get_link(page_id)
@@ -38,7 +41,8 @@ class Crawler(object):
       encoding = req.get_encoding()
       content = req.get_content()
       logging.info("Page downloaded. Encoding = " + encoding)
-      count, should_continue = site_class.handle_page(content, encoding)
+      count, should_continue = site_class.handle_page(page_id, content,
+                                                      encoding)
 
       logging.info("Wrote %d item. Should continue? %d " %
           (count, should_continue))
