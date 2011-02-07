@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 import socket
 import urllib2
+import chardet
 
 class HttpRequest(object):
   _downloaded = False
@@ -18,9 +19,10 @@ class HttpRequest(object):
     if not self.opened():
       logging.error("Request not opened yet")
       return None
+
     if ('content-type' not in self.headers or
         self.headers['content-type'].find("charset=") == -1):
-      return "UTF-8"    # FIXME, try chardet?
+      return chardet.detect(self.content)["encoding"]
     return self.headers['content-type'].split("charset=")[-1].split(';')[0]
 
   def get_content(self):
