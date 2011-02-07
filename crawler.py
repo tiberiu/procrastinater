@@ -12,13 +12,13 @@ class Crawler(object):
   def __init__(self):
     self.sites = [('failbook', Failbook())]
 
-  def get_encoding(self, req):
-    return req.headers['content-type'].split('charset=')[-1].split(';')[0]
-
   def download_page(self, url):
-    # This should actually if the download was succesfull and stuff
-    # Set headers, user agent
-    return urllib2.urlopen(url)
+    request = HttpRequest(url)
+    success = request.download()
+    if not success:
+      return None
+    else:
+      return request
 
   def crawl_site(self, site):
     site_class = site[1]
@@ -33,8 +33,8 @@ class Crawler(object):
         # Stopping the crawl process to avoid infinite loop
         break
 
-      encoding = self.get_encoding(req)
-      content = req.read()
+      encoding = req.get_encoding()
+      content = req.get_content()
       logging.info("Page downloaded. Encoding = " + encoding)
       count, should_continue = site_class.handle_page(content, encoding)
 
