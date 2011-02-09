@@ -13,8 +13,9 @@ from sites import *
 class Crawler(object):
   def __init__(self):
     self.sites = [
-        ('failbook', Failbook()),
+        #('failbook', Failbook()),
         #TODO: ('tv.com', TVcom())
+        ('failblog', Failblog()),
     ]
 
   def download_page(self, url):
@@ -31,6 +32,9 @@ class Crawler(object):
     next_page = True
     while next_page:
       url = site_class.get_link(page_id)
+      if not url:
+        break
+
       logging.info("Trying to download page %s" % url)
       req = self.download_page(url)
       if req is None:
