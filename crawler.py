@@ -13,9 +13,10 @@ from sites import *
 class Crawler(object):
   def __init__(self):
     self.sites = [
-        #('failbook', Failbook()),
+        ('failbook', Failbook()),
         #TODO: ('tv.com', TVcom())
         ('failblog', Failblog()),
+        ('fmylife', Fmylife())
     ]
 
   def download_page(self, url):

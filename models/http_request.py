@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 import socket
 import urllib2
+from urllib2 import HTTPError, URLError
 import chardet
 
 class HttpRequest(object):
@@ -83,6 +84,6 @@ class HttpRequest(object):
           else:
             # Socket error
             assert(isinstance(fetch_error, socket.error))
-            logging.error("Socket Error: %s" % str(feth_error))
+            logging.error("Socket Error: %s" % str(fetch_error))
 
     return self._downloaded
