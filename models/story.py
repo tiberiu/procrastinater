@@ -17,4 +17,9 @@ class Story(object):
     else:
       self.hash = item_hash
 
+  @staticmethod
+  def load(story_id):
+    story = session.query(Story).filter(Story.id==story_id).one()
+    return story
+
 mapper(Story, stories_table)
