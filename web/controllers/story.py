@@ -14,5 +14,3 @@ def view(request, story_id):
     "user": request.user
   })
   return HttpResponse(t.render(c))
-
-
