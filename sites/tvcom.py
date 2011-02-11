@@ -5,8 +5,7 @@ import logging
 from BeautifulSoup import BeautifulSoup
 
 from sites.base import Site
-from models import Story
-from sql import session
+from web.models import Story
 
 class TVcom(Site):
   site_id = 2
@@ -89,8 +88,8 @@ class TVcom(Site):
       content["episode_id"] = regexp.search(
           episode.find("h3").a["href"]).group(1)
 
-      items.append(Story(self.site_id, content, self.item_hash_function,
-                         now, now))
+      items.append(Story(source_site=self.site_id, content=content,
+        hash=self.hash_function(content), date=now))
 
     return items
 
@@ -111,9 +110,16 @@ class TVcom(Site):
   def should_save(self, entry):
     # Since we need to be able to update older entries, should_save returns
     # True if the item stored in the database is different than the current one
-    old_entry = session.query(Story).filter(Story.hash==entry.hash).first()
-    return not old_entry or entry.content != old_entry.content
+    try:
+      old_entry = Story.objects.get(hash=entry.hash)
+      if entry.content == old_entry.content:
+        return False
+
+      entry.id = old_entry.id
+      return True
+    except Story.DoesNotExist:
+      return True
 
   @staticmethod
-  def item_hash_function(item):
-    return "%s-%s" % (item.content["show_id"], item.content["episode_id"])
+  def hash_function(content):
+    return "%s-%s" % (content["show_id"], content["episode_id"])

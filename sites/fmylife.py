@@ -3,8 +3,7 @@ import hashlib
 
 from BeautifulSoup import BeautifulSoup
 
-from sql import *
-from models import *
+from web.models import Story
 from sites.base import Site
 
 class Fmylife(Site):
@@ -27,6 +26,6 @@ class Fmylife(Site):
       date = datetime.now()
       text = post.find("p").next.string
       entry = unicode(str(text), encoding)
-      items.append(Story(self.site_id, entry, internal_id,
-                         date, date))
+      items.append(Story(source_site=self.site_id, content=entry,
+        hash=internal_id, date=date))
     return items
