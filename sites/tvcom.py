@@ -37,7 +37,7 @@ class TVcom(Site):
         slug_show_name, show_id)
     return url
 
-  def parse_page(self, page, encoding):
+  def parse_page(self, page_id, page, encoding):
     now = datetime.datetime.now()
     soup = BeautifulSoup(unicode(page, encoding),
         convertEntities=BeautifulSoup.HTML_ENTITIES)
@@ -46,14 +46,56 @@ class TVcom(Site):
 
     items = []
     for episode in episodes:
-      # TODO: Actually extract any data apart from the title
-      content = episode.find("h3").find("a").string
+      content = {}
+      # Extract title and synopsis
+      content["title"] = episode.find("h3").a.string.strip()
+      content["synopsis"] = " ".join(aux.strip() for aux in
+          episode.find("p", {"class": "synopsis"}).findAll(text=True))
+      # Extract thumbnail url
+      content["thumbnail"] = episode.find(True,
+          {"class": lambda aux: "THUMBNAIL" in aux.split()}).find("img")["src"]
+
+      # Extract episode rating
+      rating_div = episode.find("div", {"class": "global_score"})
+      content["rating"] = rating_div.find("span", {"class": "number"}).string
+      if content["rating"] != "N/A":
+        content["rating_description"] = rating_div.find("span",
+            {"class": "description"}).string
+        content["rating_votes"] = rating_div.find("span",
+            {"class": "ratings_count"}).string
+
+      # Extract season and episode number as well as air date from meta info
+      meta = episode.find("div", {"class": "meta"}).string.strip()
+      season_regexp = re.compile("^Season\s+(\d+)")
+      episode_regexp = re.compile("^Season\s+\d+,\s+Episode\s+(\d+)")
+      air_date_regexp = re.compile("Aired:\s+(\d+)/(\d+)/(\d+)$")
+      try:
+        content["season"] = season_regexp.search(meta).group(1)
+      except:
+        pass
+      try:
+        content["episode"] = episode_regexp.search(meta).group(1)
+      except:
+        pass
+      try:
+        month, day, year = map(int, air_date_regexp.search(meta).groups())
+        content["air_date"] = datetime.date(year, month, day)
+      except:
+        pass
+
+      # Extract episode's internal id for our hash
+      regexp = re.compile("^.*/episode/(\d+)/summary.*$")
+      content["show_id"] = self.shows[page_id - 1][1]
+      content["episode_id"] = regexp.search(
+          episode.find("h3").a["href"]).group(1)
+
       items.append(Story(self.site_id, content, self.item_hash_function,
                          now, now))
+
     return items
 
   def handle_page(self, page_id, page, encoding="UTF-8"):
-    entries = self.parse_page(page, encoding)
+    entries = self.parse_page(page_id, page, encoding)
 
     cnt = 0
     for entry in entries:
@@ -74,5 +116,4 @@ class TVcom(Site):
 
   @staticmethod
   def item_hash_function(item):
-    # TODO: Figure out how to do this
-    return item.content
+    return "%s-%s" % (item.content["show_id"], item.content["episode_id"])

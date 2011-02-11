@@ -14,9 +14,9 @@ class Crawler(object):
   def __init__(self):
     self.sites = [
         ('failbook', Failbook()),
-        #TODO: ('tv.com', TVcom())
+        ('tv.com', TVcom()),
         ('failblog', Failblog()),
-        ('fmylife', Fmylife())
+        ('fmylife', Fmylife()),
     ]
 
   def download_page(self, url):
