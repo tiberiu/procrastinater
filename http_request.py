@@ -3,6 +3,7 @@ import logging
 import socket
 import urllib2
 from urllib2 import HTTPError, URLError
+
 import chardet
 
 class HttpRequest(object):

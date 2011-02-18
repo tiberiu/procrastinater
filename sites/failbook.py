@@ -3,8 +3,7 @@ import hashlib
 
 from BeautifulSoup import BeautifulSoup
 
-from sql import *
-from models import *
+from web.models import Story
 from sites.base import Site
 
 class Failbook(Site):
@@ -31,14 +30,14 @@ class Failbook(Site):
     items = []
     for fail in fails:
       content = unicode(str(fail), encoding)
-      items.append(Story(self.site_id, content, self.item_hash_function,
-                         date, date))
+      items.append(Story(source_site=self.site_id, content=content,
+        hash=self.hash_function(content), date=date))
 
     return items
 
   @staticmethod
-  def item_hash_function(item):
-    src = item.content.split("src=")[-1].split("\"")[1]
+  def hash_function(content):
+    src = content.split("src=")[-1].split("\"")[1]
     hash = hashlib.md5()
     hash.update(src)
     return hash.hexdigest()

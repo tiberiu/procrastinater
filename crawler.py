@@ -1,13 +1,19 @@
 #!/usr/bin/env python
 
+# Configure django environment
+if __name__ == "__main__":
+  import os
+  import sys
+  sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+  os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+
 import urllib2
 from datetime import datetime
 import logging
 
 from BeautifulSoup import BeautifulSoup
 
-from sql import *
-from models import *
+from http_request import HttpRequest
 from sites import *
 
 class Crawler(object):

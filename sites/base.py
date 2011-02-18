@@ -1,8 +1,7 @@
 from datetime import datetime
 import logging
 
-from models import *
-from sql import *
+from web.models import Story
 
 class Site(object):
   def get_link(self, page_id):
@@ -28,12 +27,11 @@ class Site(object):
     return (cnt, should_continue)
 
   def should_save(self, entry):
-    nr = session.query(Story).filter(Story.hash==entry.hash).count()
+    nr = Story.objects.filter(hash=entry.hash).count()
     if nr > 0:
       return False
     return True
 
   def save_item(self, entry):
-    session.add(entry)
-    session.commit()
+    entry.save()
     return True
