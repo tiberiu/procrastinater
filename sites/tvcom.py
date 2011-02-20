@@ -5,7 +5,7 @@ import logging
 from BeautifulSoup import BeautifulSoup
 
 from sites.base import Site
-from web.models import Story
+from web.models import Story, StoryContent
 
 class TVcom(Site):
   site_id = 2
@@ -56,12 +56,13 @@ class TVcom(Site):
 
       # Extract episode rating
       rating_div = episode.find("div", {"class": "global_score"})
-      content["rating"] = rating_div.find("span", {"class": "number"}).string
+      content["rating"] = rating_div.find("span", {"class": "number"}) \
+          .string.strip()
       if content["rating"] != "N/A":
         content["rating_description"] = rating_div.find("span",
-            {"class": "description"}).string
+            {"class": "description"}).string.strip()
         content["rating_votes"] = rating_div.find("span",
-            {"class": "ratings_count"}).string
+            {"class": "ratings_count"}).string.strip()
 
       # Extract season and episode number as well as air date from meta info
       meta = episode.find("div", {"class": "meta"}).string.strip()
@@ -88,21 +89,24 @@ class TVcom(Site):
       content["episode_id"] = regexp.search(
           episode.find("h3").a["href"]).group(1)
 
-      items.append(Story(source_site=self.site_id, content=content,
-        hash=self.hash_function(content), date=now))
+      items.append(StoryContent(published_date=now, **content))
 
     return items
 
   def handle_page(self, page_id, page, encoding="UTF-8"):
+    crawled_date = datetime.datetime.now()
     entries = self.parse_page(page_id, page, encoding)
 
     cnt = 0
     for entry in entries:
-      if not self.should_save(entry):
-        logging.debug("Hash %s already exists" % entry.hash)
+      hash = self.generate_hash(entry)
+      story = Story(source_site=self.site_id, content=entry, hash=hash,
+          date=entry.published_date, crawled_date=crawled_date)
+      if not self.should_save(story):
+        logging.debug("Hash %s already exists" % story.hash)
         continue
 
-      if self.save_item(entry) == True:
+      if self.save_item(story) == True:
         cnt += 1
 
     return (cnt, page_id < len(self.shows))
@@ -120,6 +124,5 @@ class TVcom(Site):
     except Story.DoesNotExist:
       return True
 
-  @staticmethod
-  def hash_function(content):
-    return "%s-%s" % (content["show_id"], content["episode_id"])
+  def generate_hash(self, entry):
+    return "%s-%s" % (entry.show_id, entry.episode_id)

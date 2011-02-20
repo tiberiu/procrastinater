@@ -19,7 +19,7 @@ from sites import *
 class Crawler(object):
   def __init__(self):
     self.sites = [
-        ('failbook', Failbook()),
+ #       ('failbook', Failbook()),
         ('tv.com', TVcom()),
         ('failblog', Failblog()),
         ('fmylife', Fmylife()),

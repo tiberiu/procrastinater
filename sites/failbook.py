@@ -3,7 +3,7 @@ import hashlib
 
 from BeautifulSoup import BeautifulSoup
 
-from web.models import Story
+from web.models import Story, StoryContent
 from sites.base import Site
 
 class Failbook(Site):
@@ -13,8 +13,8 @@ class Failbook(Site):
     return "http://failbook.failblog.org/page/" + str(page_id)
 
   def parse_page(self, page, encoding="UTF-8"):
-    #TODO: This only takes the images
-    #Should also parse other fields like title, date etc.
+    # TODO: This only takes the images
+    # Should also parse other fields like title, date etc.
     soup = BeautifulSoup(page)
 
     fails = []
@@ -30,14 +30,12 @@ class Failbook(Site):
     items = []
     for fail in fails:
       content = unicode(str(fail), encoding)
-      items.append(Story(source_site=self.site_id, content=content,
-        hash=self.hash_function(content), date=date))
+      items.append(StoryContent(content=content, published_date=date))
 
     return items
 
-  @staticmethod
-  def hash_function(content):
-    src = content.split("src=")[-1].split("\"")[1]
+  def generate_hash(self, entry):
+    src = entry.content.split("src=")[-1].split("\"")[1]
     hash = hashlib.md5()
     hash.update(src)
     return hash.hexdigest()
