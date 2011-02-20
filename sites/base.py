@@ -39,7 +39,7 @@ class Site(object):
         should_continue = True
         cnt += 1
 
-    return (cnt, False)
+    return (cnt, should_continue)
 
   def should_save(self, entry):
     nr = Story.objects.filter(hash=entry.hash).count()

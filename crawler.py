@@ -19,7 +19,7 @@ from sites import *
 class Crawler(object):
   def __init__(self):
     self.sites = [
- #       ('failbook', Failbook()),
+        ('failbook', Failbook()),
         ('tv.com', TVcom()),
         ('failblog', Failblog()),
         ('fmylife', Fmylife()),
@@ -55,7 +55,7 @@ class Crawler(object):
       count, should_continue = site_class.handle_page(page_id, content,
                                                       encoding)
 
-      logging.info("Wrote %d item. Should continue? %d " %
+      logging.info("Wrote %d item. Should continue? %s " %
           (count, should_continue))
       if not should_continue:
         next_page = False

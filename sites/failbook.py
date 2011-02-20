@@ -9,6 +9,21 @@ from sites.base import Site
 class Failbook(Site):
   site_id = 1
 
+  months = {
+    "Jan": 1,
+    "Feb": 2,
+    "Mar": 3,
+    "Apr": 4,
+    "May": 5,
+    "Jun": 6,
+    "Jul": 7,
+    "Aug": 8,
+    "Sep": 9,
+    "Oct": 10,
+    "Nov": 11,
+    "Dec": 12,
+  }
+
   def get_link(self, page_id):
     return "http://failbook.failblog.org/page/" + str(page_id)
 
@@ -17,20 +32,37 @@ class Failbook(Site):
     # Should also parse other fields like title, date etc.
     soup = BeautifulSoup(page)
 
-    fails = []
+    items = []
     posts = soup.findAll("div", {"class": "post"})
     for post in posts:
       entry = post.findAll("div", {"class": "md"})
       if len(entry) > 0:
         imgs = entry[0].findAll("img");
         if len(imgs):
-          fails.append(imgs[0])
+          img = unicode(str(imgs[0]), encoding);
+        else:
+          continue
 
-    date = datetime.now()
-    items = []
-    for fail in fails:
-      content = unicode(str(fail), encoding)
-      items.append(StoryContent(content=content, published_date=date))
+      title = post.find('h2').a.string.strip()
+      str_date = post.find('div', {"class": "postsubtitle"})\
+          .find('div', {"class": "right"}).string.strip()
+
+      month = str_date.split('. ')[0]
+      day = str_date.split('. ')[1].split(',')[0]
+      year = str_date.split('. ')[1].split(',')[1]
+
+      if not self.months.has_key(month):
+        # Still saving the object for future reparsing
+        date = datetime(1970, 1, 1)
+        logging.debug("%s not defined as a month", month)
+      else:
+        try:
+          date = datetime(int(year), self.months[month], int(day));
+        except ValueError:
+          date = datetime(1970, 1, 1)
+          logging.debug("Invalid parsed date")
+
+      items.append(StoryContent(content=img, title=title, published_date=date))
 
     return items
 
