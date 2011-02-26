@@ -7,9 +7,10 @@ if __name__ == "__main__":
   sys.path.append(os.path.dirname(os.path.abspath(__file__)))
   os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
-import urllib2
 from datetime import datetime
 import logging
+from optparse import OptionParser
+import urllib2
 
 from BeautifulSoup import BeautifulSoup
 
@@ -17,13 +18,16 @@ from http_request import HttpRequest
 from sites import *
 
 class Crawler(object):
-  def __init__(self):
+  def __init__(self, options):
     self.sites = [
         ('failbook', Failbook()),
         ('tv.com', TVcom()),
         ('failblog', Failblog()),
         ('fmylife', Fmylife()),
     ]
+    self.site = options.site
+    self.start_page = options.page
+    self.force_recrawl = options.force_recrawl
 
   def download_page(self, url):
     request = HttpRequest(url)
@@ -34,8 +38,9 @@ class Crawler(object):
       return request
 
   def crawl_site(self, site):
+    # TODO: Take into account the force recrawl parameter
     site_class = site[1]
-    page_id = 1
+    page_id = self.start_page
     next_page = True
     while next_page:
       url = site_class.get_link(page_id)
@@ -64,9 +69,19 @@ class Crawler(object):
 
   def crawl(self):
     for site in self.sites:
-      self.crawl_site(site)
+      if not self.site or self.site == site[0]:
+        self.crawl_site(site)
+
 
 if __name__ == '__main__':
   logging.basicConfig(level=logging.DEBUG)
-  crawler = Crawler()
+  parser = OptionParser()
+  parser.add_option("-s", "--site", dest="site")
+  parser.add_option("-p", "--page", dest="page", type="int", default=1)
+  parser.add_option("-f", "--force-recrawl", action="store_true",
+      dest="force_recrawl")
+
+  (options, args) = parser.parse_args()
+
+  crawler = Crawler(options)
   crawler.crawl()
