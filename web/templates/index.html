@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="wrapper" class="blue_box">
+  <div class="logo">Procrastinater</div>
+  <div id="main">
+    <table id="main_table" cellspacing="0">
+      <tr>
+        <td id="entry_stream">
+          <a href="/index/{{ next_id }}">Next</a>
+          <div id="entry">
+            {{ entry_html|safe }}
+          </div>
+        </td>
+        <td class="separator"></td>
+        <td id="shows">
+          <h1>Shows not available</h1>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+{% endblock %}

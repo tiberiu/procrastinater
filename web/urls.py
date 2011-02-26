@@ -10,10 +10,9 @@ urlpatterns = patterns('',
 
     (r'^admin/', include(admin.site.urls)),
 
-    (r'^index/$', 'web.controllers.home.index'),
+    (r'^index/(?P<id>\d*)$', 'web.controllers.index.index'),
     (r'^accounts/login/$', 'django.contrib.auth.views.login',
         {'template_name': 'login.html'}),
-    (r'^story/(?P<story_id>\d+)/$', 'web.controllers.story.view'),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'web/static'})
 )

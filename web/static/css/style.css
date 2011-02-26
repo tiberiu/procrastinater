@@ -64,3 +64,60 @@
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
 }
+
+#wrapper {
+  position: relative;
+  top: 25px;
+  display: block;
+  width: 80%;
+  margin: auto;
+}
+
+/*Small Padding */
+.spd {
+  padding: 5px;
+}
+
+/* Medium Padding */
+.mpd {
+  padding: 10px;
+}
+
+/* Large Padding */
+.lpd {
+  padding: 20px;
+}
+
+/* left float */
+.lf {
+  float: left;
+}
+
+/* right float */
+.rf {
+  float: right;
+}
+
+/* clearfix */
+.cb {
+  clear: both;
+}
+
+.separator {
+  width: 20px;
+  background-color: #9A9CCB;
+}
+
+#main_table {
+  position: relative;
+  border: 2px solid #9A9CCB;
+  width: 100%;
+}
+
+#main_table td {
+  vertical-align: top;
+}
+
+#shows {
+  width: 35%;
+}
