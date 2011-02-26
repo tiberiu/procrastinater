@@ -28,8 +28,6 @@ class Failbook(Site):
     return "http://failbook.failblog.org/page/" + str(page_id)
 
   def parse_page(self, page, encoding="UTF-8"):
-    # TODO: This only takes the images
-    # Should also parse other fields like title, date etc.
     soup = BeautifulSoup(page)
 
     items = []
