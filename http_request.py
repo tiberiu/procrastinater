@@ -55,7 +55,7 @@ class HttpRequest(object):
     socket.setdefaulttimeout(self._timeout)
     num_tries = 0
     while num_tries < self._max_tries:
-      if num_tries < 0:
+      if num_tries > 0:
         logging.debug("Retrying %d time" % num_tries)
       else:
         try:

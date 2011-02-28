@@ -6,20 +6,20 @@ from web.models import Story
 
 @login_required
 def index(request, id=None):
-  try:
-    id = int(id)
-  except ValueError:
-    id = 0
-
-  story = Story.objects.get(pk=id)
-  story_content = story.content
+  user_id = request.user.id
+  story = Story.get_next_stream_story(user_id)
+ 
+  if story:
+    story_content = story.content
+    story.users.add(request.user)
+    story.save()
+  else:
+    story_content = None
 
   t = loader.get_template('index.html')
   c = Context({
-    "id": id,
-    "next_id": id + 1,
     "user": request.user,
-    "entry_html": story_content.content
+    "entry_html": story_content
   })
 
   return HttpResponse(t.render(c))

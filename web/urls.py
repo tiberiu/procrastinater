@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     (r'^admin/', include(admin.site.urls)),
-
+    (r'^$', 'web.controllers.index.index'),
     (r'^index/(?P<id>\d*)$', 'web.controllers.index.index'),
     (r'^accounts/login/$', 'django.contrib.auth.views.login',
         {'template_name': 'login.html'}),

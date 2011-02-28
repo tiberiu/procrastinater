@@ -8,14 +8,23 @@
     <table id="main_table" cellspacing="0">
       <tr>
         <td id="entry_stream">
-          <a href="/index/{{ next_id }}">Next</a>
           <div id="entry">
-            {{ entry_html|safe }}
+            {% if entry_html %}
+              {{ entry_html.content|safe }}
+            {% else %}
+              <div class="form_error">
+                Wow, you have read everyting we had. 
+                We sent some monkeys out to look for new stories.
+                Come back in a few hours.
+              </div>
+            {% endif %}
           </div>
+          <div class="cb">
+          <a href="/index" class="button rf" >Next</a>
         </td>
         <td class="separator"></td>
         <td id="shows">
-          <h1>Shows not available</h1>
+          <h1 class="form_error">Shows not available yet</h1>
         </td>
       </tr>
     </table>

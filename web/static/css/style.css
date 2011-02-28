@@ -46,23 +46,29 @@
 .form_error {
   margin: 5px auto auto;
   display: block;
-  width: 200px;
   font-size: 12px;
   color: red;
+  text-align: center;
 }
 
 .button {
   background-color: #9A9CFF;
   border: 1px solid #939CCB;
   padding: 2px 5px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  text-decoration: none;
+  outline: none none;
+  font-size: 13px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  color: #5533AC;
 }
 
 .login_box .button {
   margin-top: 5px;
   left: 70%;
   position: relative;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
 }
 
 #wrapper {
@@ -120,4 +126,9 @@
 
 #shows {
   width: 35%;
+  padding: 10px;
+}
+
+#entry_stream {
+  padding: 10px;
 }
