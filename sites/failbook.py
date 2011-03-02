@@ -28,7 +28,8 @@ class Failbook(Site):
     return "http://failbook.failblog.org/page/" + str(page_id)
 
   def parse_page(self, page, encoding="UTF-8"):
-    soup = BeautifulSoup(page)
+    soup = BeautifulSoup(unicode(page, encoding),
+        convertEntities=BeautifulSoup.HTML_ENTITIES)
 
     items = []
     posts = soup.findAll("div", {"class": "post"})

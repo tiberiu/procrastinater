@@ -12,16 +12,18 @@ class Story(models.Model):
   users = models.ManyToManyField(User)
 
   @staticmethod
-  def get_next_stream_story(user_id):
+  def get_next_stream_story(user_id, sites=[1, 2, 3, 4]):
     # I found no better way of doing this but with a raw query
     # and using a subquery
 
-    #user_id should be an int
+    # user_id should be an int
     if not isinstance(user_id, int):
       try:
         user_id = int(user_id)
       except:
         raise ValueError
+    # sites should only contain ints
+    sites = map(int, sites)
 
     # Get stories read by user
     subquery = "SELECT web_story.id \
@@ -31,14 +33,13 @@ class Story(models.Model):
           WHERE web_story_users.user_id = '%d'" % user_id
 
 
-    non_stream_sites = ','.join(["2"])
     # Get the first story that isn't the first query
     query = "SELECT * \
           FROM web_story \
           WHERE \
             web_story.id NOT IN (%s) AND \
-            web_story.source_site NOT IN (%s) \
-          LIMIT 1" % (subquery, non_stream_sites)
+            web_story.source_site IN (%s) \
+          LIMIT 1" % (subquery, ','.join(map(str, sites)))
 
     try:
       story = list(Story.objects.raw(query))[0]
@@ -58,3 +59,7 @@ class StoryContent():
   def __init__(self, **kwargs):
     for key in kwargs:
       setattr(self, key, kwargs[key])
+
+  def __unicode__(self):
+    import pprint
+    return u"<StoryContent\n%s>" % (pprint.pformat(self.__dict__, indent=4))

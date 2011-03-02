@@ -85,11 +85,12 @@ class TVcom(Site):
 
       # Extract episode's internal id for our hash
       regexp = re.compile("^.*/episode/(\d+)/summary.*$")
-      content["show_id"] = self.shows[page_id - 1][1]
+      content["show_name"], content["show_id"] = self.shows[page_id - 1]
       content["episode_id"] = regexp.search(
           episode.find("h3").a["href"]).group(1)
 
-      items.append(StoryContent(published_date=now, **content))
+      items.append(StoryContent(
+          published_date=content.get("air_date", now), **content))
 
     return items
 
@@ -99,6 +100,9 @@ class TVcom(Site):
 
     cnt = 0
     for entry in entries:
+      if not self.check_content(entry):
+        continue
+
       hash = self.generate_hash(entry)
       story = Story(source_site=self.site_id, content=entry, hash=hash,
           date=entry.published_date, crawled_date=crawled_date)

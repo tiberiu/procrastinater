@@ -29,7 +29,8 @@ class Failblog(Site):
     return "http://failblog.org/page/%s" % page_id
 
   def parse_page(self, page, encoding="UTF-8"):
-    soup = BeautifulSoup(page)
+    soup = BeautifulSoup(unicode(page, encoding),
+        convertEntities=BeautifulSoup.HTML_ENTITIES)
     posts = soup.findAll("div", {"class": "post"})
 
     items = []

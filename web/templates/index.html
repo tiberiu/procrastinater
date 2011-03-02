@@ -11,9 +11,12 @@
           <div id="entry">
             {% if entry_html %}
               {{ entry_html.content|safe }}
+              {% if DEBUG %}
+              <textarea rows="10" cols="60" readonly="readonly" class="debug">{{ entry_html }}</textarea>
+              {% endif %}
             {% else %}
               <div class="form_error">
-                Wow, you have read everyting we had. 
+                Wow, you have read everyting we had.
                 We sent some monkeys out to look for new stories.
                 Come back in a few hours.
               </div>
@@ -24,7 +27,10 @@
         </td>
         <td class="separator"></td>
         <td id="shows">
-          <h1 class="form_error">Shows not available yet</h1>
+            <h1 class="form_error">Shows not available yet</h1>
+          {% if DEBUG %}
+            <textarea rows="24" cols="60" readonly="readonly" class="debug">{{ tv_show }}</textarea>
+          {% endif %}
         </td>
       </tr>
     </table>

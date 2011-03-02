@@ -18,7 +18,8 @@ class Fmylife(Site):
       return "http://www.fmylife.com?page=%s" % (page_id - 1)
 
   def parse_page(self, page, encoding="UTF-8"):
-    soup = BeautifulSoup(page)
+    soup = BeautifulSoup(unicode(page, encoding),
+        convertEntities=BeautifulSoup.HTML_ENTITIES)
     posts = soup.find("div", {"id": "wrapper"}).\
         findAll("div", {"class": "post"})
 
