@@ -20,11 +20,16 @@ def index(request, id=None):
   else:
     story_content = None
 
+  if tv_show:
+    tv_show_content = tv_show.content
+  else:
+    tv_show_content = None
+
   t = loader.get_template('index.html')
   c = Context({
     "user": request.user,
     "entry_html": story_content,
-    "tv_show": tv_show.content,
+    "tv_show": tv_show_content,
     "DEBUG": settings.DEBUG,
   })
 
