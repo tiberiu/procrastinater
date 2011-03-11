@@ -39,6 +39,7 @@ class Story(models.Model):
           WHERE \
             web_story.id NOT IN (%s) AND \
             web_story.source_site IN (%s) \
+          ORDER BY id DESC \
           LIMIT 1" % (subquery, ','.join(map(str, sites)))
 
     try:

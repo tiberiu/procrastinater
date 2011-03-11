@@ -99,6 +99,7 @@ class TVcom(Site):
     entries = self.parse_page(page_id, page, encoding)
 
     cnt = 0
+    items_to_save = []
     for entry in entries:
       if not self.check_content(entry):
         continue
@@ -110,10 +111,9 @@ class TVcom(Site):
         logging.debug("Hash %s already exists" % story.hash)
         continue
 
-      if self.save_item(story) == True:
-        cnt += 1
+      items_to_save.append(story)
 
-    return (cnt, page_id < len(self.shows))
+    return (items_to_save, page_id < len(self.shows))
 
   def should_save(self, entry):
     # Since we need to be able to update older entries, should_save returns

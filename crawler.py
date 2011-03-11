@@ -19,15 +19,16 @@ from sites import *
 
 class Crawler(object):
   def __init__(self, options):
-    self.sites = [
-        ('failbook', Failbook()),
-        ('tv.com', TVcom()),
-        ('failblog', Failblog()),
-        ('fmylife', Fmylife()),
-    ]
+    self.sites = {
+        'failbook': Failbook(),
+        'tv.com': TVcom(),
+        'failblog': Failblog(),
+        'fmylife': Fmylife(),
+    }
     self.site = options.site
     self.start_page = options.page
     self.force_recrawl = options.force_recrawl
+    self.first_page = options.first_page
 
   def download_page(self, url):
     request = HttpRequest(url)
@@ -37,11 +38,11 @@ class Crawler(object):
     else:
       return request
 
-  def crawl_site(self, site):
+  def crawl_site(self, site_class):
     # TODO: Take into account the force recrawl parameter
-    site_class = site[1]
     page_id = self.start_page
     next_page = True
+    items = []
     while next_page:
       url = site_class.get_link(page_id)
       if not url:
@@ -57,21 +58,55 @@ class Crawler(object):
       encoding = req.get_encoding()
       content = req.get_content()
       logging.info("Page downloaded. Encoding = " + encoding)
-      count, should_continue = site_class.handle_page(page_id, content,
+      page_items, should_continue = site_class.handle_page(page_id, content,
                                                       encoding)
 
-      logging.info("Wrote %d item. Should continue? %s " %
-          (count, should_continue))
-      if not should_continue:
+      logging.info("Got %d items. Should continue? %s " %
+          (len(page_items), should_continue))
+      items.extend(page_items)
+      if not should_continue or self.first_page:
         next_page = False
       else:
         page_id += 1
+    return items
+
+  def save_items(self):
+    import random
+    choices = []
+    for key in self.items.keys():
+      if len(self.items[key]):
+        choices.append(key)
+
+    cnt = 1
+    while len(choices):
+      site_name = random.choice(choices)
+      site_class = self.sites[site_name]
+      item = self.items[site_name].pop()
+
+      if not site_class.should_save(item):
+        continue
+
+      if not site_class.save_item(item):
+        continue
+
+      cnt += 1
+      logging.info("Wrote item from %s" % site_name)
+
+      choices = []
+      for key in self.items.keys():
+        if len(self.items[key]):
+          choices.append(key)
+
+    logging.info("Wrote %d items." % cnt)
 
   def crawl(self):
-    for site in self.sites:
-      if not self.site or self.site == site[0]:
-        self.crawl_site(site)
-
+    self.items = {}
+    for site_name in self.sites.keys():
+      site_class = self.sites[site_name]
+      if not self.site or self.site == site_name:
+        site_items = self.crawl_site(site_class)
+        self.items[site_name] = site_items
+    self.save_items()
 
 if __name__ == '__main__':
   logging.basicConfig(level=logging.DEBUG)
@@ -80,7 +115,8 @@ if __name__ == '__main__':
   parser.add_option("-p", "--page", dest="page", type="int", default=1)
   parser.add_option("-f", "--force-recrawl", action="store_true",
       dest="force_recrawl")
-
+  parser.add_option("-o", "--first-page", action="store_true",
+      dest="first_page")
   (options, args) = parser.parse_args()
 
   crawler = Crawler(options)

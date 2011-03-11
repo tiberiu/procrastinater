@@ -22,6 +22,7 @@ class Site(object):
 
     cnt = 0
     should_continue = False
+    items_to_save = []
     for entry in entries:
       if not self.check_content(entry):
         continue
@@ -34,12 +35,11 @@ class Site(object):
       if not self.should_save(story):
         logging.debug("Hash %s already exists" % story.hash)
         continue
+      
+      should_continue = True
+      items_to_save.append(story)
 
-      if self.save_item(story) == True:
-        should_continue = True
-        cnt += 1
-
-    return (cnt, should_continue)
+    return (items_to_save, should_continue)
 
   def should_save(self, entry):
     nr = Story.objects.filter(hash=entry.hash).count()

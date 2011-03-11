@@ -45,7 +45,7 @@ class Fmylife(Site):
             (str_date, year, day, month))
         date = datetime(1970, 1, 1)
 
-      text = post.find("p").next.string
+      text = ' '.join(part.string for part in post.find("p").findAll("a"))
       entry = unicode(str(text), encoding)
       items.append(StoryContent(internal_id=internal_id, content=entry,
           published_date=date))
