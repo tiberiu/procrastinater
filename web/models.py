@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -12,7 +14,21 @@ class Story(models.Model):
   users = models.ManyToManyField(User)
 
   @staticmethod
-  def get_next_stream_story(user_id, sites=[1, 2, 3, 4]):
+  def get_episodes_by_range(start_date, end_date):
+    #FIXME: We need a better way than hardcoding this
+    shows_sites_id = [2]
+    episodes = Story.objects.filter(date__gt=start_date,
+        date__lte=end_date,
+        source_site__in=shows_sites_id)
+    for episode in episodes:
+      if 'air_date' in episode.content.__dict__:
+        yield episode.content
+
+  @staticmethod
+  def get_next_stream_story(user_id):
+    #FIXME: We need a better way than hardcoding this
+    stream_sites_id = [1, 3, 4]
+
     # I found no better way of doing this but with a raw query
     # and using a subquery
 
@@ -22,8 +38,6 @@ class Story(models.Model):
         user_id = int(user_id)
       except:
         raise ValueError
-    # sites should only contain ints
-    sites = map(int, sites)
 
     # Get stories read by user
     subquery = "SELECT web_story.id \
@@ -33,14 +47,14 @@ class Story(models.Model):
           WHERE web_story_users.user_id = '%d'" % user_id
 
 
-    # Get the first story that isn't the first query
+    # Get the first story that isn't in the first query
     query = "SELECT * \
           FROM web_story \
           WHERE \
             web_story.id NOT IN (%s) AND \
             web_story.source_site IN (%s) \
           ORDER BY id DESC \
-          LIMIT 1" % (subquery, ','.join(map(str, sites)))
+          LIMIT 1" % (subquery, ','.join(map(str, stream_sites_id)))
 
     try:
       story = list(Story.objects.raw(query))[0]

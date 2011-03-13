@@ -28,11 +28,22 @@
         </td>
         <td class="separator"></td>
         <td id="shows">
-            <h1 class="form_error">Shows not available yet</h1>
-          {% if tv_show %}
-            {% if DEBUG %}
-              <textarea rows="24" cols="60" readonly="readonly" class="debug">{{ tv_show }}</textarea>
-            {% endif %}
+          <h2>Episodes aired in the last 7 days</h2>
+          <ul>
+          {% for episode in past_episodes %}
+            <li>{{ episode.show_name }} : {{ episode.title }}</li>
+          {% endfor %}
+          </ul>
+          <h2>Episodes airing in the next 7 days</h2>
+          <ul>
+          {% for episode in next_episodes %}
+            <li>{{ episode.show_name }} : {{ episode.title }}</li>
+          {% endfor %}
+          </ul>
+ 
+          {% if DEBUG %}
+            <textarea rows="24" cols="60" readonly="readonly" class="debug">
+            </textarea>
           {% endif %}
         </td>
       </tr>

@@ -1,3 +1,5 @@
+from datetime import timedelta, datetime
+
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -8,10 +10,14 @@ from web.models import Story
 @login_required
 def index(request, id=None):
   user_id = request.user.id
-  story = Story.get_next_stream_story(user_id,
-      sites=[1, 3, 4])
-  tv_show = Story.get_next_stream_story(user_id,
-      sites=[2])
+  story = Story.get_next_stream_story(user_id)
+
+  # It's good like this until we figure a way to keep a history
+  # of viewed shows
+  today = datetime.today()
+  week = timedelta(days=7)
+  past_episodes = Story.get_episodes_by_range(today - week, today)
+  next_episodes = Story.get_episodes_by_range(today, today + week)
 
   if story:
     story_content = story.content
@@ -20,16 +26,12 @@ def index(request, id=None):
   else:
     story_content = None
 
-  if tv_show:
-    tv_show_content = tv_show.content
-  else:
-    tv_show_content = None
-
   t = loader.get_template('index.html')
   c = Context({
     "user": request.user,
     "entry_html": story_content,
-    "tv_show": tv_show_content,
+    "past_episodes": past_episodes,
+    "next_episodes": next_episodes,
     "DEBUG": settings.DEBUG,
   })
 
