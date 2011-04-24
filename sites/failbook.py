@@ -4,10 +4,11 @@ import hashlib
 from BeautifulSoup import BeautifulSoup
 
 from web.models import Story, StoryContent
-from sites.base import Site
+from sites.base import Parser
 
-class Failbook(Site):
+class Failbook(Parser):
   site_id = 1
+  entry_type = 1
 
   months = {
     "Jan": 1,
@@ -38,7 +39,7 @@ class Failbook(Site):
       if len(entry) > 0:
         imgs = entry[0].findAll("img");
         if len(imgs):
-          img = unicode(str(imgs[0]), encoding);
+          img = unicode(imgs[0]);
         else:
           continue
 

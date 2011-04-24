@@ -82,3 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'web',
 )
+
+# Auth app settings
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/index'

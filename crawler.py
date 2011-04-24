@@ -29,6 +29,7 @@ class Crawler(object):
     self.start_page = options.page
     self.force_recrawl = options.force_recrawl
     self.first_page = options.first_page
+    self.dry_run = options.dry_run
 
   def download_page(self, url):
     request = HttpRequest(url)
@@ -90,7 +91,7 @@ class Crawler(object):
         continue
 
       cnt += 1
-      logging.info("Wrote item from %s" % site_name)
+      logging.debug("Wrote item from %s" % site_name)
 
       choices = []
       for key in self.items.keys():
@@ -100,13 +101,19 @@ class Crawler(object):
     logging.info("Wrote %d items." % cnt)
 
   def crawl(self):
+    if self.dry_run:
+      logging.info("This is just a dry run so nothing will be saved in " +
+          "the database")
+
     self.items = {}
     for site_name in self.sites.keys():
       site_class = self.sites[site_name]
       if not self.site or self.site == site_name:
         site_items = self.crawl_site(site_class)
         self.items[site_name] = site_items
-    self.save_items()
+
+    if not self.dry_run:
+      self.save_items()
 
 if __name__ == '__main__':
   logging.basicConfig(level=logging.DEBUG)
@@ -117,6 +124,9 @@ if __name__ == '__main__':
       dest="force_recrawl")
   parser.add_option("-o", "--first-page", action="store_true",
       dest="first_page")
+  parser.add_option("-d", "--dry-run", action="store_true",
+      dest="dry_run")
+
   (options, args) = parser.parse_args()
 
   crawler = Crawler(options)

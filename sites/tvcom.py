@@ -4,31 +4,31 @@ import logging
 
 from BeautifulSoup import BeautifulSoup
 
-from sites.base import Site
-from web.models import Story, StoryContent
+from sites.base import Parser
+from web.models import Story, StoryContent, EntryType
 
-class TVcom(Site):
+class TVcom(Parser):
   site_id = 2
 
   shows = [
-      ("House", "22374"),
-      ("Lie to Me", "75671"),
-      ("The Mentalist", "75200"),
-      ("Top Gear", "27682"),
-      ("How I Met Your Mother", "33700"),
-      ("The Big Bang Theory", "58056"),
-      ("Grey's Anatomy", "24440"),
-      ("The Office", "22343"),
-      ("The Simpsons", "146"),
-      ("South Park", "344"),
-      ("Family Guy", "348"),
-      ("American Dad!", "21935"),
-      ("Two and a Half Men", "17206")
+      ("House", "22374", "4",),
+      ("Lie to Me", "75671", "5"),
+      ("The Mentalist", "75200", "6"),
+      ("Top Gear", "27682", "7"),
+      ("How I Met Your Mother", "33700", "8"),
+      ("The Big Bang Theory", "58056", "9"),
+      ("Grey's Anatomy", "24440", "10"),
+      ("The Office", "22343", "11"),
+      ("The Simpsons", "146", "12"),
+      ("South Park", "344", "13"),
+      ("Family Guy", "348", "14"),
+      ("American Dad!", "21935", "15"),
+      ("Two and a Half Men", "17206", "16")
   ]
 
   def get_link(self, page_id):
     # Get the (page_id)th show url
-    show_name, show_id = self.shows[page_id - 1]
+    show_name, show_id = self.shows[page_id - 1][:2]
     slug_show_name = re.sub("[^\w\s-]", "", show_name.strip().lower())
     slug_show_name = re.sub("[-\s]+", "-", slug_show_name)
 
@@ -83,9 +83,12 @@ class TVcom(Site):
       except:
         pass
 
-      # Extract episode's internal id for our hash
+      # Extract episode's internal properties (entry type and show id)
       regexp = re.compile("^.*/episode/(\d+)/summary.*$")
-      content["show_name"], content["show_id"] = self.shows[page_id - 1]
+      content["show_name"] = self.shows[page_id - 1][0]
+      content["show_id"] = self.shows[page_id - 1][1]
+      content["show_type"] = self.shows[page_id - 1][2]
+
       content["episode_id"] = regexp.search(
           episode.find("h3").a["href"]).group(1)
 
@@ -105,8 +108,10 @@ class TVcom(Site):
         continue
 
       hash = self.generate_hash(entry)
+      entry_type = self.get_entry_type(entry)
       story = Story(source_site=self.site_id, content=entry, hash=hash,
-          date=entry.published_date, crawled_date=crawled_date)
+          date=entry.published_date, crawled_date=crawled_date,
+          entry_type=entry_type)
       if not self.should_save(story):
         logging.debug("Hash %s already exists" % story.hash)
         continue
@@ -114,6 +119,9 @@ class TVcom(Site):
       items_to_save.append(story)
 
     return (items_to_save, page_id < len(self.shows))
+
+  def get_entry_type(self, entry):
+    return EntryType.objects.get(id=entry.show_type)
 
   def should_save(self, entry):
     # Since we need to be able to update older entries, should_save returns

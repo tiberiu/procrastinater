@@ -1,0 +1,50 @@
+{% extends "base_main.html" %}
+
+{% block main_content %}
+
+<form method="post" action="/profile/save" id="edit_profile">
+  <table class="form_table">
+    <tr>
+      <td class="form_label">Old Password</td>
+      <td class="form_input">
+        <input name="old_pass" type="password" size="20" />
+      </td>
+    </tr>
+    <tr>
+      <td class="form_label">New Password</td>
+      <td class="form_input">
+        <input name="new_pass" type="password" size="20" />
+      </td>
+    </tr>
+    <tr>
+      <td class="form_label">Confirm Password</td>
+      <td class="form_input">
+        <input name="confirm" type="password" size="20" />
+      </td>
+    </tr>
+  </table>
+
+  <span>Websites you would like to follow:</span>
+  <table class="form_table">
+  {% for type in entry_types %}
+    <tr>
+      <td>
+        <input type="checkbox"
+            value="{{ type.id }}"
+            name="types"
+            id="types"
+            {% if type in user_types %}
+              checked="checked"
+            {% endif %} >
+          {{ type.type_name }}
+        </input>
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+
+  <input type="submit" value="Save" class="button">
+</form>
+
+
+{% endblock %}

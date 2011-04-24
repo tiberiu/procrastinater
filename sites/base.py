@@ -4,9 +4,9 @@ import logging
 
 from django.utils.encoding import force_unicode
 
-from web.models import Story, StoryContent
+from web.models import Story, StoryContent, EntryType
 
-class Site(object):
+class Parser(object):
   def get_link(self, page_id):
     raise NotImplementedError()
 
@@ -29,13 +29,14 @@ class Site(object):
 
       # build entry
       hash = self.generate_hash(entry)
+      type = self.get_entry_type(entry)
       story = Story(source_site=self.site_id, content=entry, hash=hash,
-          date=entry.published_date, crawled_date=crawled_date)
+          date=entry.published_date, crawled_date=crawled_date, entry_type=type)
 
       if not self.should_save(story):
         logging.debug("Hash %s already exists" % story.hash)
         continue
-      
+
       should_continue = True
       items_to_save.append(story)
 
@@ -49,6 +50,9 @@ class Site(object):
 
   def get_mandatory_fields(self):
     return ['published_date']
+
+  def get_entry_type(self, entry):
+    return EntryType.objects.get(id=self.entry_type)
 
   def check_content(self, content):
     if not isinstance(content, StoryContent):

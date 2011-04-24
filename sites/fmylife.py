@@ -6,10 +6,11 @@ import logging
 from BeautifulSoup import BeautifulSoup
 
 from web.models import Story, StoryContent
-from sites.base import Site
+from sites.base import Parser
 
-class Fmylife(Site):
+class Fmylife(Parser):
   site_id = 4
+  entry_type = 3
 
   def get_link(self, page_id):
     if page_id == 1:
@@ -46,7 +47,7 @@ class Fmylife(Site):
         date = datetime(1970, 1, 1)
 
       text = ' '.join(part.string for part in post.find("p").findAll("a"))
-      entry = unicode(str(text), encoding)
+      entry = text
       items.append(StoryContent(internal_id=internal_id, content=entry,
           published_date=date))
     return items

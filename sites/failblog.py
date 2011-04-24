@@ -3,11 +3,12 @@ import hashlib
 
 from BeautifulSoup import BeautifulSoup
 
-from web.models import Story, StoryContent
-from sites.base import Site
+from web.models import Story, StoryContent, EntryType
+from sites.base import Parser
 
-class Failblog(Site):
+class Failblog(Parser):
   site_id = 3
+  entry_type = 2
 
   months = {
     "Jan": 1,
@@ -58,7 +59,7 @@ class Failblog(Site):
           logging.debug("Invalid parsed date")
 
       p = post.find("div", {"class": "md"}).find("p")
-      entry = unicode(str(p), encoding)
+      entry = unicode(p)
       items.append(StoryContent(internal_id=internal_id, title=title,
           content=entry, published_date=date))
     return items

@@ -16,8 +16,8 @@ def index(request, id=None):
   # of viewed shows
   today = datetime.today()
   week = timedelta(days=7)
-  past_episodes = Story.get_episodes_by_range(today - week, today)
-  next_episodes = Story.get_episodes_by_range(today, today + week)
+  past_episodes = Story.get_episodes_by_range(today - week, today, user_id)
+  next_episodes = Story.get_episodes_by_range(today, today + week, user_id)
 
   if story:
     story_content = story.content
@@ -26,8 +26,8 @@ def index(request, id=None):
   else:
     story_content = None
 
-  t = loader.get_template('index.html')
-  c = Context({
+  template = loader.get_template('index.html')
+  context = Context({
     "user": request.user,
     "entry_html": story_content,
     "past_episodes": past_episodes,
@@ -35,4 +35,4 @@ def index(request, id=None):
     "DEBUG": settings.DEBUG,
   })
 
-  return HttpResponse(t.render(c))
+  return HttpResponse(template.render(context))

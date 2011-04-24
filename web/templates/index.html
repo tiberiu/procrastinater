@@ -1,53 +1,52 @@
-{% extends "base.html" %}
+{% extends "base_main.html" %}
 
-{% block content %}
+{% block main_content %}
 
-<div id="wrapper" class="blue_box">
-  <div class="logo">Procrastinater</div>
-  <div id="main">
-    <table id="main_table" cellspacing="0">
-      <tr>
-        <td id="entry_stream">
-          <div id="entry">
-            {% if entry_html %}
-              <h2>{{ entry_html.title|safe }}</h2>
-              {{ entry_html.content|safe }}
-              {% if DEBUG %}
-              <textarea rows="10" cols="60" readonly="readonly" class="debug">{{ entry_html }}</textarea>
-              {% endif %}
-            {% else %}
-              <div class="form_error">
-                Wow, you have read everyting we had.
-                We sent some monkeys out to look for new stories.
-                Come back in a few hours.
-              </div>
+<div id="main">
+  <table id="main_table" cellspacing="0">
+    <tr>
+      <td id="entry_stream">
+        <div id="entry">
+          {% if entry_html %}
+            <h2>{{ entry_html.title|safe }}</h2>
+            {{ entry_html.content|safe }}
+            {% if DEBUG %}
+            <textarea rows="10" cols="60" readonly="readonly" class="debug">{{ entry_html }}</textarea>
             {% endif %}
-          </div>
-          <div class="cb">
-          <a href="/index" class="button rf" >Next</a>
-        </td>
-        <td class="separator"></td>
-        <td id="shows">
-          <h2>Episodes aired in the last 7 days</h2>
-          <ul>
+            <a href="/index" class="button rf" >Next</a>
+          {% else %}
+            <div class="form_error">
+              Wow, you have read everyting we had.
+              We sent some monkeys out to look for new stories.
+              Come back in a few hours.
+            </div>
+          {% endif %}
+        </div>
+        <div class="cb">
+      </td>
+      <td class="separator"></td>
+      <td id="shows">
+        <h2>Episodes aired in the last 7 days</h2>
+        <ul>
+        {% if past_episodes %}
           {% for episode in past_episodes %}
             <li>{{ episode.show_name }} : {{ episode.title }}</li>
           {% endfor %}
-          </ul>
-          <h2>Episodes airing in the next 7 days</h2>
-          <ul>
-          {% for episode in next_episodes %}
-            <li>{{ episode.show_name }} : {{ episode.title }}</li>
-          {% endfor %}
-          </ul>
+        {% endif %}
+        </ul>
+        <h2>Episodes airing in the next 7 days</h2>
+        <ul>
+        {% for episode in next_episodes %}
+          <li>{{ episode.show_name }} : {{ episode.title }}</li>
+        {% endfor %}
+        </ul>
  
-          {% if DEBUG %}
-            <textarea rows="24" cols="60" readonly="readonly" class="debug">
-            </textarea>
-          {% endif %}
-        </td>
-      </tr>
-    </table>
-  </div>
+        {% if DEBUG %}
+          <textarea rows="24" cols="60" readonly="readonly" class="debug">
+          </textarea>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
 </div>
 {% endblock %}
