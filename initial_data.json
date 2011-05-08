@@ -1,0 +1,114 @@
+[
+    {
+        "pk": 1,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Failbook"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Failblog"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Fmylife"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "House"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Lie to Me"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "The Mentalist"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Top Gear"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "How I Met Your Mother"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "The Big Bang Theory"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Grey's Anatomy"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "The Office"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "The Simpsons"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "South Park"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Family Guy"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "American Dad!"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "web.entrytype",
+        "fields": {
+            "type_name": "Two and a Half Men"
+        }
+    }
+]

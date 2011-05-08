@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from web.pickle_field import PickledObjectField
 
 class EntryType(models.Model):
-  type_name = models.CharField(max_length=128)
-  followers = models.ManyToManyField(User)
+  type_name = models.CharField(max_length=128, unique=True)
+  followers = models.ManyToManyField(User, blank=True)
 
   def __unicode__(self):
     return u"type_name=%s type_id=%s" % (self.type_name,

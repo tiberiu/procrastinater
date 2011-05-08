@@ -32,12 +32,11 @@
         <input type="checkbox"
             value="{{ type.id }}"
             name="types"
-            id="types"
+            id="type_{{ type.id }}"
             {% if type in user_types %}
               checked="checked"
-            {% endif %} >
-          {{ type.type_name }}
-        </input>
+            {% endif %} />
+        <label for="type_{{ type.id }}">{{ type.type_name }}</label>
       </td>
     </tr>
   {% endfor %}
