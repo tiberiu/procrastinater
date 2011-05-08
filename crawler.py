@@ -30,6 +30,12 @@ class Crawler(object):
     self.force_recrawl = options.force_recrawl
     self.first_page = options.first_page
     self.dry_run = options.dry_run
+    self.verbose = options.verbose
+
+    if self.verbose:
+      logging.basicConfig(level=logging.DEBUG)
+    else:
+      logging.basicConfig(level=logging.INFO)
 
   def download_page(self, url):
     request = HttpRequest(url)
@@ -49,7 +55,7 @@ class Crawler(object):
       if not url:
         break
 
-      logging.info("Trying to download page %s" % url)
+      logging.debug("Trying to download page %s" % url)
       req = self.download_page(url)
       if req is None:
         # Page could not be downloaded
@@ -58,7 +64,7 @@ class Crawler(object):
 
       encoding = req.get_encoding()
       content = req.get_content()
-      logging.info("Page downloaded. Encoding = " + encoding)
+      logging.debug("Page downloaded. Encoding = " + encoding)
       page_items, should_continue = site_class.handle_page(page_id, content,
                                                       encoding)
 
@@ -78,7 +84,7 @@ class Crawler(object):
       if len(self.items[key]):
         choices.append(key)
 
-    cnt = 1
+    cnt = 0
     while len(choices):
       site_name = random.choice(choices)
       site_class = self.sites[site_name]
@@ -98,7 +104,7 @@ class Crawler(object):
         if len(self.items[key]):
           choices.append(key)
 
-    logging.info("Wrote %d items." % cnt)
+    logging.info("Wrote %d items" % cnt)
 
   def crawl(self):
     if self.dry_run:
@@ -109,6 +115,7 @@ class Crawler(object):
     for site_name in self.sites.keys():
       site_class = self.sites[site_name]
       if not self.site or self.site == site_name:
+        logging.info("Crawling site %s" % site_name)
         site_items = self.crawl_site(site_class)
         self.items[site_name] = site_items
 
@@ -116,7 +123,6 @@ class Crawler(object):
       self.save_items()
 
 if __name__ == '__main__':
-  logging.basicConfig(level=logging.DEBUG)
   parser = OptionParser()
   parser.add_option("-s", "--site", dest="site")
   parser.add_option("-p", "--page", dest="page", type="int", default=1)
@@ -126,6 +132,8 @@ if __name__ == '__main__':
       dest="first_page")
   parser.add_option("-d", "--dry-run", action="store_true",
       dest="dry_run")
+  parser.add_option("-v", "--verbose", action="store_true",
+      dest="verbose")
 
   (options, args) = parser.parse_args()
 

@@ -13,7 +13,7 @@
             {% if DEBUG %}
             <textarea rows="10" cols="60" readonly="readonly" class="debug">{{ entry_html }}</textarea>
             {% endif %}
-            <a href="/index" class="button rf" >Next</a>
+            <a href="{% url index %}" class="button rf" >Next</a>
           {% else %}
             <div class="form_error">
               Wow, you have read everyting we had.

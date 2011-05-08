@@ -4,7 +4,7 @@
 
 <div class="blue_box login_box">
   <div class="logo">Procrastinater</div>
-  <form method="post" action="/login/">{% csrf_token %}
+  <form method="post" action="{% url login %}">{% csrf_token %}
     {% if form.errors %}
       <div class="form_error">
         Invalid username or password

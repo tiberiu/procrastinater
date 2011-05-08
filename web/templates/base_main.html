@@ -5,9 +5,9 @@
 <div id="wrapper" class="blue_box">
   <div class="logo">Procrastinater</div>
     <div id="topnav" class="topnav">
-      <div class="menu_item"><a href="/index">Home</a></div>
-      <div class="menu_item"><a href="/profile">Profile</a></div>
-      <div class="menu_item"><a href="/logout">Logout</a></div>
+      <div class="menu_item"><a href="{% url index %}">Home</a></div>
+      <div class="menu_item"><a href="{% url profile_edit %}">Profile</a></div>
+      <div class="menu_item"><a href="{% url logout %}">Logout</a></div>
       <div class="cb"></div>
     </div>
     {% block main_content %} {% endblock %}

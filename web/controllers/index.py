@@ -8,7 +8,7 @@ from django.conf import settings
 from web.models import Story
 
 @login_required
-def index(request, id=None):
+def index(request):
   user_id = request.user.id
   story = Story.get_next_stream_story(user_id)
 

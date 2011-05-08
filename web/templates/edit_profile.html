@@ -2,7 +2,7 @@
 
 {% block main_content %}
 
-<form method="post" action="/profile/save" id="edit_profile">
+<form method="post" action="{% url profile_save %}" id="edit_profile">
   <table class="form_table">
     <tr>
       <td class="form_label">Old Password</td>
