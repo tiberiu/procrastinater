@@ -37,6 +37,7 @@ class TVcom(Parser):
     return url
 
   def parse_page(self, page_id, page, encoding):
+    logging.info("Parsing tv show %s" % self.shows[page_id - 1][0])
     now = datetime.datetime.now()
     soup = BeautifulSoup(unicode(page, encoding),
         convertEntities=BeautifulSoup.HTML_ENTITIES)
@@ -47,7 +48,12 @@ class TVcom(Parser):
     for episode in episodes:
       content = {}
       # Extract title and synopsis
-      content["title"] = episode.find("h3").a.string.strip()
+      try:
+        content["title"] = episode.find("h3").a.string.strip()
+      except:
+        logging.warn("Unable to extract an episode's title. Skipping...")
+        continue
+
       content["synopsis"] = " ".join(aux.strip() for aux in
           episode.find("p", {"class": "synopsis"}).findAll(text=True))
       # Extract thumbnail url
